@@ -117,7 +117,7 @@ for epoch in range(EPOCH):
 
     if val_acc > best_acc:
         best_acc = val_acc
-        torch.save(model.state_dict(), "best_vit_cifar100.pth")
+        torch.save(model.state_dict(), "./logs/best_vit_ff_cifar100.pth")
         print("Saved Best Model!")
     scheduler.step()
 
