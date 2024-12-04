@@ -4,7 +4,7 @@ import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 from models.configs import get_b16_config
-from models.vit import VisionTransformer
+from models.vit_prompt import VisionTransformer
 from tqdm import tqdm
 import numpy as np
 import random
@@ -39,7 +39,7 @@ model.load_from(np.load('./pre_trained_model/imagenet21k_ViT-B_16.npz'))
 model.head = nn.Linear(configs.hidden_size, 100)
 model = model.to(device)
 
-checkpoint = torch.load("/data/final_proj/logs/best_vit_lin_prob_cifar100.pth")
+checkpoint = torch.load("/data/final_proj/logs/best_vit_pt_cifar100_ptl5.pth")
 model.load_state_dict(checkpoint)
 
 criterion = nn.CrossEntropyLoss()

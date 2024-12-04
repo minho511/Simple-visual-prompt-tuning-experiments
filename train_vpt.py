@@ -5,7 +5,7 @@ from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 from torch.utils.data import random_split
 from models.configs import get_b16_config
-from models.vit import VisionTransformer
+from models.vit_prompt import VisionTransformer
 from tqdm import tqdm
 import numpy as np
 import random
@@ -22,7 +22,7 @@ def seed_torch(seed=42):
     torch.backends.cudnn.benchmark = False
     torch.backends.cudnn.enabled = False
 
-EPOCH = 20
+EPOCH = 30
 
 # visual prompt tuning
 PROMPT_LENGTH = 1
@@ -63,14 +63,17 @@ model.head = nn.Linear(configs.hidden_size, 100)
 
 # visual prompt tuning ==============================================================================================
 for n, p in model.named_parameters():
-    if "prompt" not in n:
-        p.requires_grad_(False)
+    if "prompt" in n: continue
+    if "head" in n: continue
+    p.requires_grad_(False)
 # ===================================================================================================================
 
 model = model.to(device)
 
+print("# of learnable params", sum(p.numel() for p in model.parameters() if p.requires_grad))
+
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.AdamW(model.parameters(), lr=1e-4, weight_decay=1e-4)
+optimizer = optim.AdamW(model.parameters(), lr=1e-4)
 scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=EPOCH)
 
 def train(model, dataloader, criterion, optimizer, device):

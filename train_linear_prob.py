@@ -22,7 +22,7 @@ def seed_torch(seed=42):
     torch.backends.cudnn.benchmark = False
     torch.backends.cudnn.enabled = False
 
-EPOCH = 20
+EPOCH = 30
 
 ## https://github.com/jeonsworld/ViT-pytorch
 seed_torch(42)
@@ -48,9 +48,8 @@ val_size = len(train_dataset) - train_size  # 20% for validation
 train_subset, val_subset = random_split(train_dataset, [train_size, val_size])
 test_dataset = datasets.CIFAR100(root="./data", train=False, download=True, transform=transform_test)
 
-train_loader = DataLoader(train_subset, batch_size=128, shuffle=True, num_workers=4, pin_memory=True)
-val_loader = DataLoader(val_subset, batch_size=128, shuffle=False, num_workers=4, pin_memory=True)
-test_loader = DataLoader(test_dataset, batch_size=128, shuffle=False, num_workers=4, pin_memory=True)
+train_loader = DataLoader(train_subset, batch_size=64, shuffle=True, num_workers=4, pin_memory=True)
+val_loader = DataLoader(val_subset, batch_size=64, shuffle=False, num_workers=4, pin_memory=True)
 
 configs = get_b16_config()
 model = VisionTransformer(config = configs)
@@ -67,7 +66,7 @@ model = model.to(device)
 print("# of learnable params", sum(p.numel() for p in model.parameters() if p.requires_grad))
 
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.AdamW(model.parameters(), lr=1e-4, weight_decay=1e-4)
+optimizer = optim.AdamW(model.parameters(), lr=1e-4)
 scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=EPOCH)
 
 def train(model, dataloader, criterion, optimizer, device):

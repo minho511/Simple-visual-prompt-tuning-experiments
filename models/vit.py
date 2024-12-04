@@ -328,5 +328,4 @@ class VisionTransformer(nn.Module):
 
 CONFIGS = {
     'ViT-B_16': configs.get_b16_config(),
-    'ViT-B_32': configs.get_b32_config(),
 }
