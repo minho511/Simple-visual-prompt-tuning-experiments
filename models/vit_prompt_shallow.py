@@ -230,27 +230,22 @@ class Encoder(nn.Module):
             layer = Block(config, vis)
             self.layer.append(copy.deepcopy(layer))
         
-        self.prompt_length = 1 # shallow
-        self.prompt = nn.ModuleList([nn.Parameter(torch.zeros(1, self.prompt_length, 768)) for _ in range(12)])
+        prompt_length = 10
+
+        self.prompt = nn.Parameter(torch.zeros(1, prompt_length, 768))
         torch.nn.init.xavier_uniform_(self.prompt)
 
     def forward(self, hidden_states): # [B, 197, 768]
         attn_weights = []
         B = hidden_states.shape[0]
-
-        for i, layer_block in enumerate(self.layer):
-            prompt = self.prompt[i].expand(B, -1, -1) # [B, prompt_length, 768]
-            if i == 0:
-                hidden_states = torch.cat([hidden_states[:, 0, :].unsqueeze(1), prompt, hidden_states[:, 1:, :]], dim = 1) # [B, 198, 768]
-            else:
-                hidden_states = torch.cat([hidden_states[:, 0, :].unsqueeze(1), prompt, hidden_states[:, 1+self.prompt_length:, :]], dim = 1) # [B, 198, 768]
-
+        prompt = self.prompt.expand(B, -1, -1) # [B, prompt_length, 768]
+        hidden_states = torch.cat([hidden_states[:, 0, :].unsqueeze(1), prompt, hidden_states[:, 1:, :]], dim = 1) # [B, 198, 768]
+        for layer_block in self.layer:
             hidden_states, weights = layer_block(hidden_states)
             if self.vis:
                 attn_weights.append(weights)
         encoded = self.encoder_norm(hidden_states)
         return encoded, attn_weights
-
 
 class Transformer(nn.Module):
     def __init__(self, config, img_size, vis):

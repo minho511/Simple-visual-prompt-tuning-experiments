@@ -39,7 +39,7 @@ model.load_from(np.load('./pre_trained_model/imagenet21k_ViT-B_16.npz'))
 model.head = nn.Linear(configs.hidden_size, 100)
 model = model.to(device)
 
-checkpoint = torch.load("/data/final_proj/logs/best_vit_pt_cifar100_ptl5.pth")
+checkpoint = torch.load("/data/final_proj/logs/best_vit_pt_cifar100_deep_5.pth")
 model.load_state_dict(checkpoint)
 
 criterion = nn.CrossEntropyLoss()

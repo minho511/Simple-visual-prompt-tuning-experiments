@@ -126,7 +126,7 @@ for epoch in range(EPOCH):
     print(f"Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.4f}")
     print(f"Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.4f}")
 
-    if val_acc > best_acc:
+    if val_acc >= best_acc:
         best_acc = val_acc
         torch.save(model.state_dict(), "./logs/best_vit_pt_cifar100.pth")
         print("Saved Best Model!")

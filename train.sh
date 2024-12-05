@@ -1,2 +1,3 @@
-python train_fully_finetune.py
-python train_linear_prob.py
+python timedelay.py
+python test_vpt.py
+python train_vpt.py
